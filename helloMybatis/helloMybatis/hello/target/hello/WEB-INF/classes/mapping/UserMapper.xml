@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<!-- namespace为对应的mapper接口 -->
+<mapper namespace="com.hello.dao.UserMapper" >
+  <!-- 配置resultMap -->
+  <resultMap id="BaseResultMap" type="com.hello.entity.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+  <!-- user扩展role ResultMap -->
+  <resultMap id="BaseUserCustomerResultMap" type="com.hello.entity.UserCustomer" >
+    <id column="id" property="id" />
+    <result column="name" property="name" />
+    <result column="password" property="password" />
+    <!-- 因为我的role表的主键也为id，内连接后表的两列重名，因此我在查询语句中修改了列名，改为roleId -->
+    <association property="role" javaType="com.hello.entity.Role" >
+      <id column="roleId" property="id" />
+      <result column="roleName" property="name" />
+    </association>
+  </resultMap>
+
+  <!-- user扩展userDetail ResultMap 包含对应的多个角色对象 -->
+  <!-- extends继承定义的ResultMap，因为userDetail继承user，包含user的全部信息 -->
+  <!-- ofType该集合属性映射到哪个pojo -->
+  <resultMap id="BaseUserDetailResultMap" type="com.hello.entity.UserDetail" extends="BaseResultMap" >
+    <collection property="roles" ofType="com.hello.entity.Role" >
+      <id column="roleId" property="id" />
+      <result column="roleName" property="name" />
+    </collection>
+  </resultMap>
+
+  <!--
+    查询user延迟加载role的配置
+    主要是使用select：从表的statement语句的id
+    column：用于连接查询关联表的列
+   -->
+  <!--
+      嵌套 Select 语句查询会导致 N+1 选择问题。 首先，主查询将会执行（1 次） ，对于主
+      查询返回的每一行，另外一个查询将会被执行（主查询 N 行，则此查询 N 次） 。 对于
+      大型数据库而言，这会导致很差的性能问题。
+  <resultMap id="BaseUserDetailResultMap" type="com.hello.entity.UserDetail" extends="BaseResultMap" >
+    <collection property="roles" ofType="com.hello.entity.Role"
+                column="userId"
+                select="mapping.RoleMapper.getRolesByUserRoleTableOfUserId">
+    </collection>
+  </resultMap>
+  -->
+
+  <!-- sql片段 id为唯一标识符 -->
+  <sql id="Base_Column_List" >
+    id, name, password
+  </sql>
+
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <!--
+    使用useGeneratedKeys="true" keyProperty="id"后可以得到插入的主键
+    id为User对象的主键属性
+    使用jdbcType，那么这个字段可以为空
+  -->
+  <insert id="insert" parameterType="com.hello.entity.User"
+          useGeneratedKeys="true" keyProperty="id">
+    insert into user (id, name, password
+    )
+    values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <!--
+    prefix前缀
+    suffix后缀
+    prefixOverrides消除最前面的
+    suffixOverrides=","消除最后面的','
+    测试后发现如果传入的name和password都为null时报错
+  -->
+  <insert id="insertSelective" parameterType="com.hello.entity.User"
+          useGeneratedKeys="true" keyProperty="id">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <!-- set可以消除最后的',' -->
+  <update id="updateByPrimaryKeySelective" parameterType="com.hello.entity.User" >
+    update user
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <update id="updateByPrimaryKey" parameterType="com.hello.entity.User" >
+    update user
+    set name = #{name,jdbcType=VARCHAR},
+    password = #{password,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+
+
+
+  <!-- 自定义sql -->
+
+
+  <select id="getAll" resultType="com.hello.entity.User">
+    SELECT *
+    FROM user
+  </select>
+
+  <!-- 多参数不能用parameterType 用#{index} index为参数的下表 -->
+  <select id="getByPage" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM user
+    limit #{0}, #{1}
+  </select>
+
+  <!-- where可以自动去除第一个and -->
+  <select id="get" resultMap="BaseResultMap" parameterType="com.hello.entity.User">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM user
+    <where>
+      <if test="id != null">
+        and id = #{id}
+      </if>
+      <if test="name != null">
+        and name = #{name}
+      </if>
+      <if test="password != null">
+        and password = #{password}
+      </if>
+    </where>
+  </select>
+
+
+  <!-- 传入list集合 -->
+  <!-- collection="list" 传入数组为array-->
+  <select id="getByIds" resultMap="BaseResultMap">
+    SELECT *
+    FROM user u
+    <where>
+      u.id IN
+      <foreach collection="list" item="id" open="(" close=")" separator="," index="index">
+        #{id}
+      </foreach>
+    </where>
+  </select>
+
+  <!-- 关联查询 -->
+  <!-- 如果对于查询的结果有要求，可以扩展user pojo，加入role中的属性 -->
+  <select id="getByRole" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT u.*
+    FROM user u, userrole ur, role r
+    WHERE u.id = ur.userId and r.id = ur.roleId
+    and r.name = #{roleName}
+  </select>
+
+  <!-- 扩展对象 resultType -->
+  <select id="getUserInfoByRole" resultType="com.hello.entity.UserInfo" parameterType="java.lang.String">
+    SELECT u.*, r.name AS roleName
+    FROM user u, userrole ur, role r
+    WHERE u.id = ur.userId and r.id = ur.roleId
+    and r.name = #{roleName}
+  </select>
+
+  <!-- 扩展对象 resultMap -->
+  <select id="getUserInfoByRoleResultMap" resultMap="BaseUserCustomerResultMap" parameterType="java.lang.String">
+    SELECT u.*, r.id as roleId, r.name AS roleName
+    FROM user u, userrole ur, role r
+    WHERE u.id = ur.userId and r.id = ur.roleId
+    and r.name = #{roleName}
+  </select>
+
+  <select id="getUserInfo" resultMap="BaseUserCustomerResultMap" >
+    SELECT u.*, r.id as roleId, r.name AS roleName
+    FROM user u, userrole ur, role r
+    WHERE u.id = ur.userId and r.id = ur.roleId
+  </select>
+
+  <!-- 一个用户有多个角色 UesrDetail继承user，包含一个List<Role> roles属性 -->
+  <!--<select id="getUserDetail" resultMap="BaseUserDetailResultMap">-->
+  <!--SELECT u.*, r.id as roleId, r.name AS roleName-->
+  <!--FROM user u, userrole ur, role r-->
+  <!--WHERE u.id = ur.userId and r.id = ur.roleId-->
+  <!--</select>-->
+  <!-- user延迟加载role的主表查询statement -->
+  <select id="getUserDetail" resultMap="BaseUserDetailResultMap">
+    SELECT *
+    FROM user
+  </select>
+
+</mapper>

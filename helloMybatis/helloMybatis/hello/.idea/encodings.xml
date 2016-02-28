@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/dao/UserDao.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/dao/UserMapper.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/dySql/UserSqlProvider.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/entity/Role.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/entity/UserDetail.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/impl/UserAnnotationServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/hello/service/TestUserAnnotationService.java" charset="UTF-8" />
+  </component>
+</project>
