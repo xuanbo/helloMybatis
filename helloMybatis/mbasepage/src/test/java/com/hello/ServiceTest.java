@@ -1,5 +1,6 @@
 package com.hello;
 
+import com.github.pagehelper.PageHelper;
 import com.hello.entity.User;
 import com.hello.service.UserService;
 import org.junit.Test;
@@ -31,8 +32,27 @@ public class ServiceTest {
         for (User  user : users){
             System.out.println("id:" + user.getId() + " username:" + user.getUsername()
             + " roleid:" + user.getRoleid());
-            //����mapper�ӿ���ʹ�õ�ע��û��ӳ������Role,����ֵΪnull
+            //由于mapper接口中使用的注解没有映射属性Role,所以值为null
             System.out.println(user.getRole());
         }
+    }
+
+    @Test
+    public void getByPageHelper(){
+        /**
+         * 只有紧跟在PageHelper.startPage方法后的第一个Mybatis的查询（Select方法）方法会被分页。
+         */
+        PageHelper.startPage(1, 3);
+        List<User> users = userService.getAll();
+        for (User user : users){
+            System.out.println("id:" + user.getId() + " username:" + user.getUsername()
+                    + " roleid:" + user.getRoleid());
+        }
+        System.out.println("-----------------");
+        for (User user : userService.getAll()){
+            System.out.println("id:" + user.getId() + " username:" + user.getUsername()
+                    + " roleid:" + user.getRoleid());
+        }
+        System.out.println("-----------------");
     }
 }

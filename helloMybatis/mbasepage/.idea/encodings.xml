@@ -4,8 +4,13 @@
     <file url="file://$PROJECT_DIR$/src/main/java/com/hello/dao/RoleMapper.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/hello/dao/UserMapper.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/hello/entity/User.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/BaseService.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/RoleService.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/UserService.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/impl/BaseServiceImpl.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/impl/RoleServiceImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/hello/service/impl/UserServiceImpl.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/test/java/com/hello/AppTests.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/test/java/com/hello/ServiceTest.java" charset="UTF-8" />
   </component>
 </project>

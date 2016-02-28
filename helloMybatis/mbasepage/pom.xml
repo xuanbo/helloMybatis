@@ -73,6 +73,13 @@
             <version>${mybatis.version}</version>
         </dependency>
 
+        <!-- mybatis pageHelper分页插件 -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>4.1.0</version>
+        </dependency>
+
         <!-- mybatis spring  -->
         <dependency>
             <groupId>org.mybatis</groupId>

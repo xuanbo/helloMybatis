@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 
 /**
- * BaseService½Ó¿Ú
+ * BaseServiceæ¥å£
  * @param <T>
  * @param <ID>
  */
